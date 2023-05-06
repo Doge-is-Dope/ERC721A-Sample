@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.19;
 
 import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -10,6 +10,15 @@ contract Dango is ERC721, ERC721Enumerable, Ownable {
 
     function safeMint(address to, uint256 tokenId) public onlyOwner {
         _safeMint(to, tokenId);
+    }
+
+    function batchMint(address to, uint256 quantity) public onlyOwner {
+        require(quantity != 0, "Dango: Can't mint 0 tokens");
+        for (uint256 i = 0; i < quantity;) {
+            unchecked {
+                _safeMint(to, i++);
+            }
+        }
     }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)

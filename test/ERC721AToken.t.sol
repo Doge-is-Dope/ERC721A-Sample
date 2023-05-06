@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
-import "../src/ERC721Token.sol";
+import "../src/ERC721AToken.sol";
 
 contract DangoTest is Test {
     Dango dango;
@@ -19,23 +19,20 @@ contract DangoTest is Test {
     }
 
     /// @dev mint multiple tokens in one transaction
-    function _batchMint(uint256 _amount) private {
-        dango.batchMint(user1, _amount);
-        assertEq(dango.balanceOf(user1), _amount);
+    function _batchMint(address _receiver, uint256 _quantity) private {
+        dango.batchMint(_receiver, _quantity);
+        assertEq(dango.balanceOf(_receiver), _quantity);
     }
 
     /// @dev Test mint
     function testMint() public {
-        _batchMint(10);
+        _batchMint(user1, 10);
         assertEq(dango.balanceOf(user1), 10);
-
-        vm.expectRevert("ERC721: token already minted"); // Check token minted
-        dango.safeMint(user1, 0);
     }
 
     /// @dev Test transfer
     function testTransfer() public {
-        _batchMint(10);
+        _batchMint(user1, 10);
 
         vm.prank(user1);
         dango.safeTransferFrom(user1, user2, DEFAULT_TOKEN_ID);
@@ -46,7 +43,7 @@ contract DangoTest is Test {
 
     /// @dev Test approve
     function testApprove() public {
-        _batchMint(10);
+        _batchMint(user1, 10);
         assertEq(dango.balanceOf(user1), 10);
         assertEq(dango.balanceOf(user2), 0);
 
